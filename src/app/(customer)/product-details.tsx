@@ -10,17 +10,10 @@ import {
   View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import ProductSlider from "../../components/customer/product-slider";
+import ProductSpecs from "../../components/customer/product-specs";
 
 const { width: SCREEN_WIDTH } = Dimensions.get("window");
-
-const COLORS = [
-  { id: "beige", value: "#F5E6D3" },
-  { id: "dark-grey", value: "#6A7282" },
-  { id: "peach", value: "#FADBD8" },
-  { id: "light-blue", value: "#D6EAF8" },
-];
-
-const SIZES = ["S", "M", "L", "XL"];
 
 // Helper to return dynamic descriptions matching selected items
 const getProductDescription = (title: string) => {
@@ -113,41 +106,13 @@ export default function ProductDetailsScreen() {
         contentContainerStyle={{ paddingBottom: 150 }} // Increased bottom padding to prevent bottom floating bar overlap
         showsVerticalScrollIndicator={false}
       >
-        {/* Product Image Carousel Slider */}
-        <View className="bg-white relative">
-          <ScrollView
-            horizontal
-            pagingEnabled
-            showsHorizontalScrollIndicator={false}
-            onScroll={handleScroll}
-            scrollEventThrottle={16}
-            style={{ width: SCREEN_WIDTH, height: 256 }}
-          >
-            {productSlides.map((slideUri, index) => (
-              <Image
-                key={index}
-                source={{ uri: slideUri }}
-                style={{ width: SCREEN_WIDTH, height: 256 }}
-                resizeMode="cover"
-              />
-            ))}
-          </ScrollView>
-
-          {/* Paginator dots */}
-          <View className="flex-row gap-2 mt-4 mb-2 justify-center">
-            {productSlides.map((_, i) => (
-              <View
-                key={i}
-                className={`h-2 rounded-full ${
-                  activeSlide === i ? "w-6" : "w-2"
-                }`}
-                style={{
-                  backgroundColor: activeSlide === i ? "#F97316" : "#E5E7EB",
-                }}
-              />
-            ))}
-          </View>
-        </View>
+        {/* Product Image Carousel Slider Component */}
+        <ProductSlider
+          productSlides={productSlides}
+          activeSlide={activeSlide}
+          onScroll={handleScroll}
+          screenWidth={SCREEN_WIDTH}
+        />
 
         {/* Content details wrapper (removed flex-1 constraint to allow ScrollView to function correctly) */}
         <View className="px-6 pt-4 bg-[#F9F7F6]/40 rounded-t-[40px] border-t border-gray-100">
@@ -197,72 +162,13 @@ export default function ProductDetailsScreen() {
             </Text>
           </View>
 
-          {/* Color Selector */}
-          <View className="mt-6">
-            <Text className="text-brand-gray text-sm font-semibold mb-3">
-              Color
-            </Text>
-            <View className="flex-row gap-3">
-              {COLORS.map((color) => {
-                const isSelected = selectedColor === color.id;
-                return (
-                  <TouchableOpacity
-                    key={color.id}
-                    onPress={() => setSelectedColor(color.id)}
-                    className="w-9 h-9 rounded-full justify-center items-center"
-                    style={{
-                      borderWidth: isSelected ? 1.5 : 0,
-                      borderColor: "#F97316",
-                    }}
-                  >
-                    <View
-                      className="w-7 h-7 rounded-full border border-gray-200"
-                      style={{ backgroundColor: color.value }}
-                    />
-                  </TouchableOpacity>
-                );
-              })}
-            </View>
-          </View>
-
-          {/* Size Selector & Stock */}
-          <View className="mt-6">
-            <View className="flex-row justify-between items-center mb-3">
-              <Text className="text-brand-gray text-sm font-semibold">
-                Size
-              </Text>
-              <Text
-                className="text-xs font-semibold"
-                style={{ color: "#F97316" }}
-              >
-                Stock: 200
-              </Text>
-            </View>
-            <View className="flex-row gap-3">
-              {SIZES.map((size) => {
-                const isSelected = selectedSize === size;
-                return (
-                  <TouchableOpacity
-                    key={size}
-                    onPress={() => setSelectedSize(size)}
-                    className="w-12 h-10 rounded-xl justify-center items-center border"
-                    style={{
-                      backgroundColor: "#FFFFFF",
-                      borderColor: isSelected ? "#F97316" : "#E5E7EB",
-                      borderWidth: isSelected ? 1.5 : 1,
-                    }}
-                  >
-                    <Text
-                      className="font-bold text-sm"
-                      style={{ color: isSelected ? "#F97316" : "#6A7282" }}
-                    >
-                      {size}
-                    </Text>
-                  </TouchableOpacity>
-                );
-              })}
-            </View>
-          </View>
+          {/* Size & Color Specs Component */}
+          <ProductSpecs
+            selectedColor={selectedColor}
+            setSelectedColor={setSelectedColor}
+            selectedSize={selectedSize}
+            setSelectedSize={setSelectedSize}
+          />
 
           {/* Product Description */}
           <View className="mt-8">

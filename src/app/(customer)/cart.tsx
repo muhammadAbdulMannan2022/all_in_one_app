@@ -11,6 +11,8 @@ import {
   View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import CartItemRow from "../../components/customer/cart-item-row";
+import CartSummary from "../../components/customer/cart-summary";
 
 // Mock cart items initially
 const INITIAL_ITEMS = [
@@ -219,110 +221,22 @@ export default function CartScreen() {
         ) : (
           items.map((item) => (
             <SwipeableItem key={item.id} onDelete={() => handleDelete(item.id)}>
-              <View className="flex-row bg-white rounded-2xl p-3 border border-gray-100 shadow-sm relative w-full">
-                {/* Left: Product Image */}
-                <View className="w-20 h-20 rounded-xl bg-orange-50 justify-center items-center overflow-hidden mr-3">
-                  <Image
-                    source={{ uri: item.image }}
-                    className="w-full h-full"
-                    resizeMode="cover"
-                  />
-                </View>
-
-                {/* Right: details info */}
-                <View className="flex-1 justify-between py-0.5">
-                  <View>
-                    <Text className="text-brand-dark font-bold text-sm leading-4">
-                      {item.title}
-                    </Text>
-                    <Text className="text-brand-gray text-[10px] mt-0.5 font-medium leading-3">
-                      Color: {item.color}
-                    </Text>
-                    <Text className="text-brand-gray text-[10px] font-medium leading-3">
-                      Size: {item.size}
-                    </Text>
-                  </View>
-                  <Text
-                    className="font-bold text-xs"
-                    style={{ color: "#F97316" }}
-                  >
-                    ${item.price}
-                  </Text>
-                </View>
-
-                {/* Plus / Minus counter selector */}
-                <View className="flex-row items-center gap-2.5 self-center">
-                  <TouchableOpacity
-                    onPress={() => handleQuantityChange(item.id, -1)}
-                    className="w-6 h-6 rounded-full bg-gray-50 border border-gray-200 justify-center items-center"
-                  >
-                    <Ionicons name="remove" size={14} color="#6A7282" />
-                  </TouchableOpacity>
-                  <Text className="text-brand-dark font-bold text-xs">
-                    {item.quantity}
-                  </Text>
-                  <TouchableOpacity
-                    onPress={() => handleQuantityChange(item.id, 1)}
-                    className="w-6 h-6 rounded-full bg-gray-50 border border-gray-200 justify-center items-center"
-                  >
-                    <Ionicons name="add" size={14} color="#F97316" />
-                  </TouchableOpacity>
-                </View>
-              </View>
+              <CartItemRow
+                item={item}
+                onQuantityChange={(delta) => handleQuantityChange(item.id, delta)}
+              />
             </SwipeableItem>
           ))
         )}
 
-        {/* Price summary panel card */}
+        {/* Price summary panel card component */}
         {items.length > 0 && (
-          <View className="bg-white rounded-3xl p-5 border border-gray-100 shadow-sm mt-4 mb-10">
-            <Text className="text-brand-dark text-sm font-bold border-b border-gray-100 pb-3">
-              Price Summary
-            </Text>
-
-            <View className="gap-3.5 py-4 border-b border-dashed border-gray-200">
-              <View className="flex-row justify-between items-center">
-                <Text className="text-brand-gray text-xs font-semibold">
-                  Total Items
-                </Text>
-                <Text className="text-brand-dark text-xs font-bold">
-                  {items.length} Items
-                </Text>
-              </View>
-              <View className="flex-row justify-between items-center">
-                <Text className="text-brand-gray text-xs font-semibold">
-                  Sub Total
-                </Text>
-                <Text className="text-brand-dark text-xs font-bold">
-                  ${subTotal.toFixed(2)}
-                </Text>
-              </View>
-              <View className="flex-row justify-between items-center">
-                <Text className="text-brand-gray text-xs font-semibold">
-                  Delivery Fee
-                </Text>
-                <Text className="text-green-500 text-xs font-bold">Free</Text>
-              </View>
-              <View className="flex-row justify-between items-center">
-                <Text className="text-brand-gray text-xs font-semibold">
-                  Tax (8%)
-                </Text>
-                <Text className="text-brand-dark text-xs font-bold">
-                  ${tax.toFixed(2)}
-                </Text>
-              </View>
-            </View>
-
-            <View className="flex-row justify-between items-center pt-4">
-              <Text className="text-brand-dark text-xs font-bold">Total</Text>
-              <Text
-                className="text-base font-bold"
-                style={{ color: "#F97316" }}
-              >
-                ${grandTotal.toFixed(2)}
-              </Text>
-            </View>
-          </View>
+          <CartSummary
+            itemsCount={items.length}
+            subTotal={subTotal}
+            tax={tax}
+            grandTotal={grandTotal}
+          />
         )}
       </ScrollView>
 
@@ -342,7 +256,15 @@ export default function CartScreen() {
       ) : (
         <View className="px-6 py-4 bg-white border-t border-gray-100">
           <TouchableOpacity
-            onPress={() => alert("Checkout process coming soon!")}
+            onPress={() =>
+              router.push({
+                pathname: "/(customer)/checkout",
+                params: {
+                  totalItems: items.reduce((acc, curr) => acc + curr.quantity, 0),
+                  totalAmount: grandTotal.toFixed(2),
+                },
+              })
+            }
             className="w-full py-4 rounded-2xl justify-center items-center shadow-sm"
             style={{ backgroundColor: "#F97316" }}
           >
