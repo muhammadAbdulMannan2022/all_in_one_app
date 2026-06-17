@@ -11,11 +11,13 @@ export interface ProductItem {
 
 interface CustomerProductsProps {
   products: ProductItem[];
+  onProductPress?: (product: ProductItem) => void;
   onAddProduct?: (id: string) => void;
 }
 
 export function CustomerProducts({
   products,
+  onProductPress,
   onAddProduct,
 }: CustomerProductsProps) {
   return (
@@ -27,12 +29,14 @@ export function CustomerProducts({
       {/* 3 Grid Cards */}
       <View className="flex-row justify-between w-full gap-2">
         {products.map((prod) => (
-          <View
+          <TouchableOpacity
             key={prod.id}
-            className="bg-white rounded-2xl  border border-gray-100 shadow-sm justify-between flex-1"
+            onPress={() => onProductPress?.(prod)}
+            className="bg-white rounded-2xl border border-gray-100 shadow-sm justify-between flex-1 overflow-hidden"
+            activeOpacity={0.9}
           >
             {/* Product image from internet */}
-            <View className="w-full h-24 rounded-xl overflow-hidden mb-2 bg-[#F3F4F6]">
+            <View className="w-full h-24 bg-[#F3F4F6]">
               <Image
                 source={{ uri: prod.image }}
                 className="w-full h-full"
@@ -52,7 +56,6 @@ export function CustomerProducts({
                 </Text>
                 {/* Rating */}
                 <View className="flex-row items-center gap-0.5 shrink-0">
-                  {/* Added shrink-0 */}
                   <Ionicons name="star" size={10} color="#FFD700" />
                   <Text className="text-brand-gray text-[10px] font-semibold">
                     {prod.rating}
@@ -69,7 +72,10 @@ export function CustomerProducts({
                   ${prod.price}
                 </Text>
                 <TouchableOpacity
-                  onPress={() => onAddProduct?.(prod.id)}
+                  onPress={(e) => {
+                    e.stopPropagation(); // Prevent navigating when adding to cart
+                    onAddProduct?.(prod.id);
+                  }}
                   className="w-6 h-6 rounded-full justify-center items-center"
                   style={{ backgroundColor: "rgba(249, 115, 22, 0.08)" }}
                 >
@@ -77,7 +83,7 @@ export function CustomerProducts({
                 </TouchableOpacity>
               </View>
             </View>
-          </View>
+          </TouchableOpacity>
         ))}
       </View>
     </View>

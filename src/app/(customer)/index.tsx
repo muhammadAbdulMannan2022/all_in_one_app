@@ -1,50 +1,58 @@
-import { useState } from "react";
-import { ScrollView, TouchableOpacity, Text, View } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
 import { useAssets } from "expo-asset";
+import { useRouter } from "expo-router";
+import { useState } from "react";
+import { ScrollView, Text, TouchableOpacity, View } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 
-import { CustomerHeader } from "@/components/customer/customer-header";
-import { CustomerServiceSelector } from "@/components/customer/customer-service-selector";
-import { CustomerSearchBar } from "@/components/customer/customer-search-bar";
-import { CustomerPromoBanner } from "@/components/customer/customer-promo-banner";
 import { CustomerCategories } from "@/components/customer/customer-categories";
-import { CustomerProducts } from "@/components/customer/customer-products";
 import { CustomerFilterModal } from "@/components/customer/customer-filter-modal";
+import { CustomerHeader } from "@/components/customer/customer-header";
+import { CustomerProducts } from "@/components/customer/customer-products";
+import { CustomerPromoBanner } from "@/components/customer/customer-promo-banner";
+import { CustomerSearchBar } from "@/components/customer/customer-search-bar";
+import { CustomerServiceSelector } from "@/components/customer/customer-service-selector";
 
 // Dynamic data mapping for categories and products by service
 const SERVICE_DATA = {
   products: {
     categories: [
-      { id: "electronic", title: "Electronic", icon: "phone-portrait-outline" as const },
+      {
+        id: "electronic",
+        title: "Electronic",
+        icon: "phone-portrait-outline" as const,
+      },
       { id: "clothing", title: "Clothing", icon: "shirt-outline" as const },
       { id: "grocery", title: "Grocery", icon: "basket-outline" as const },
       { id: "cosmetic", title: "Cosmetic", icon: "sparkles-outline" as const },
       { id: "pharmacy", title: "Pharmacy", icon: "medical-outline" as const },
     ],
     products: [
-      { 
-        id: "p1", 
-        title: "Sneakers", 
-        price: 120, 
-        rating: 4.8, 
-        image: "https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=400" 
+      {
+        id: "p1",
+        title: "Sneakers",
+        price: 120,
+        rating: 4.8,
+        image:
+          "https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=400",
       },
-      { 
-        id: "p2", 
-        title: "Smart Watch", 
-        price: 199, 
-        rating: 4.7, 
-        image: "https://images.unsplash.com/photo-1508685096489-7aacd43bd3b1?w=400" 
+      {
+        id: "p2",
+        title: "Smart Watch",
+        price: 199,
+        rating: 4.7,
+        image:
+          "https://images.unsplash.com/photo-1508685096489-7aacd43bd3b1?w=400",
       },
-      { 
-        id: "p3", 
-        title: "Headphones", 
-        price: 89, 
-        rating: 4.6, 
-        image: "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=400" 
+      {
+        id: "p3",
+        title: "Headphones",
+        price: 89,
+        rating: 4.6,
+        image:
+          "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=400",
       },
-    ]
+    ],
   },
   restaurant: {
     categories: [
@@ -55,28 +63,31 @@ const SERVICE_DATA = {
       { id: "drinks", title: "Beverages", icon: "cafe-outline" as const },
     ],
     products: [
-      { 
-        id: "r1", 
-        title: "Margherita Pizza", 
-        price: 15, 
-        rating: 4.9, 
-        image: "https://images.unsplash.com/photo-1604382354936-07c5d9983bd3?w=400" 
+      {
+        id: "r1",
+        title: "Margherita Pizza",
+        price: 15,
+        rating: 4.9,
+        image:
+          "https://images.unsplash.com/photo-1604382354936-07c5d9983bd3?w=400",
       },
-      { 
-        id: "r2", 
-        title: "Double Burger", 
-        price: 12, 
-        rating: 4.8, 
-        image: "https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=400" 
+      {
+        id: "r2",
+        title: "Double Burger",
+        price: 12,
+        rating: 4.8,
+        image:
+          "https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=400",
       },
-      { 
-        id: "r3", 
-        title: "California Sushi", 
-        price: 18, 
-        rating: 4.7, 
-        image: "https://images.unsplash.com/photo-1579871494447-9811cf80d66c?w=400" 
+      {
+        id: "r3",
+        title: "California Sushi",
+        price: 18,
+        rating: 4.7,
+        image:
+          "https://images.unsplash.com/photo-1579871494447-9811cf80d66c?w=400",
       },
-    ]
+    ],
   },
   "car-rent": {
     categories: [
@@ -87,28 +98,31 @@ const SERVICE_DATA = {
       { id: "van", title: "Van", icon: "bus-outline" as const },
     ],
     products: [
-      { 
-        id: "c1", 
-        title: "Tesla Model Y", 
-        price: 85, 
-        rating: 4.9, 
-        image: "https://images.unsplash.com/photo-1619767886558-efdc259cde1a?w=400" 
+      {
+        id: "c1",
+        title: "Tesla Model Y",
+        price: 85,
+        rating: 4.9,
+        image:
+          "https://images.unsplash.com/photo-1619767886558-efdc259cde1a?w=400",
       },
-      { 
-        id: "c2", 
-        title: "Toyota RAV4 SUV", 
-        price: 60, 
-        rating: 4.8, 
-        image: "https://images.unsplash.com/photo-1533473359331-0135ef1b58bf?w=400" 
+      {
+        id: "c2",
+        title: "Toyota RAV4 SUV",
+        price: 60,
+        rating: 4.8,
+        image:
+          "https://images.unsplash.com/photo-1533473359331-0135ef1b58bf?w=400",
       },
-      { 
-        id: "c3", 
-        title: "Ford Mustang GT", 
-        price: 110, 
-        rating: 4.7, 
-        image: "https://images.unsplash.com/photo-1611245422472-3580556f8f53?w=400" 
+      {
+        id: "c3",
+        title: "Ford Mustang GT",
+        price: 110,
+        rating: 4.7,
+        image:
+          "https://images.unsplash.com/photo-1611245422472-3580556f8f53?w=400",
       },
-    ]
+    ],
   },
   "get-ride": {
     categories: [
@@ -119,33 +133,39 @@ const SERVICE_DATA = {
       { id: "bike", title: "Bicycle", icon: "walk-outline" as const },
     ],
     products: [
-      { 
-        id: "g1", 
-        title: "Standard Ride", 
-        price: 8, 
-        rating: 4.7, 
-        image: "https://images.unsplash.com/photo-1492664738988-2be91080becd?w=400" 
+      {
+        id: "g1",
+        title: "Standard Ride",
+        price: 8,
+        rating: 4.7,
+        image:
+          "https://images.unsplash.com/photo-1492664738988-2be91080becd?w=400",
       },
-      { 
-        id: "g2", 
-        title: "Comfort Ride", 
-        price: 15, 
-        rating: 4.9, 
-        image: "https://images.unsplash.com/photo-1549399542-7e3f8b79c341?w=400" 
+      {
+        id: "g2",
+        title: "Comfort Ride",
+        price: 15,
+        rating: 4.9,
+        image:
+          "https://images.unsplash.com/photo-1549399542-7e3f8b79c341?w=400",
       },
-      { 
-        id: "g3", 
-        title: "Instant Moto", 
-        price: 5, 
-        rating: 4.6, 
-        image: "https://images.unsplash.com/photo-1558981806-ec527fa84c39?w=400" 
+      {
+        id: "g3",
+        title: "Instant Moto",
+        price: 5,
+        rating: 4.6,
+        image:
+          "https://images.unsplash.com/photo-1558981806-ec527fa84c39?w=400",
       },
-    ]
-  }
+    ],
+  },
 };
 
 export default function CustomerHomeScreen() {
-  const [selectedService, setSelectedService] = useState<"products" | "restaurant" | "car-rent" | "get-ride">("products");
+  const router = useRouter();
+  const [selectedService, setSelectedService] = useState<
+    "products" | "restaurant" | "car-rent" | "get-ride"
+  >("products");
   const [searchQuery, setSearchQuery] = useState("");
   const [isFilterVisible, setIsFilterVisible] = useState(false);
   const [minPrice, setMinPrice] = useState("");
@@ -157,7 +177,11 @@ export default function CustomerHomeScreen() {
 
   // Handle service change and set default sub-category automatically
   const handleSelectService = (serviceId: string) => {
-    const service = serviceId as "products" | "restaurant" | "car-rent" | "get-ride";
+    const service = serviceId as
+      | "products"
+      | "restaurant"
+      | "car-rent"
+      | "get-ride";
     setSelectedService(service);
     const defaultCat = SERVICE_DATA[service].categories[0].id;
     setSelectedCategory(defaultCat);
@@ -173,11 +197,11 @@ export default function CustomerHomeScreen() {
         showsVerticalScrollIndicator={false}
       >
         {/* Top Header & Logo */}
-        <CustomerHeader 
+        <CustomerHeader
           name="Rahim Rehman"
           cartCount={1}
           notificationCount={1}
-          onCartPress={() => console.log("Cart pressed")}
+          onCartPress={() => router.push("/(customer)/cart")}
           onNotificationPress={() => console.log("Notifications pressed")}
         />
 
@@ -205,9 +229,24 @@ export default function CustomerHomeScreen() {
         />
 
         {/* Featured Products Grid (dynamic based on selected service) */}
-        <CustomerProducts 
-          products={currentServiceData.products} 
-          onAddProduct={(id) => console.log("Added product:", id)} 
+        <CustomerProducts
+          products={currentServiceData.products}
+          onProductPress={(prod) => {
+            router.push({
+              pathname: "/(customer)/product-details",
+              params: {
+                id: prod.id,
+                title: prod.title,
+                price: prod.price.toString(),
+                rating: prod.rating.toString(),
+                image: prod.image,
+              },
+            });
+          }}
+          onAddProduct={(id) => {
+            console.log("Added product to cart:", id);
+            router.push("/(customer)/cart");
+          }}
         />
       </ScrollView>
 
@@ -217,7 +256,11 @@ export default function CustomerHomeScreen() {
         <TouchableOpacity
           onPress={() => setActiveTab("home")}
           className="items-center justify-center py-2 px-4 rounded-full flex-row gap-2"
-          style={activeTab === "home" ? { backgroundColor: "rgba(249, 115, 22, 0.08)" } : undefined}
+          style={
+            activeTab === "home"
+              ? { backgroundColor: "rgba(249, 115, 22, 0.08)" }
+              : undefined
+          }
         >
           <Ionicons
             name="home"
@@ -225,7 +268,9 @@ export default function CustomerHomeScreen() {
             color={activeTab === "home" ? "#F97316" : "#AAAAAA"}
           />
           {activeTab === "home" && (
-            <Text className="font-bold text-xs" style={{ color: "#F97316" }}>Home</Text>
+            <Text className="font-bold text-xs" style={{ color: "#F97316" }}>
+              Home
+            </Text>
           )}
         </TouchableOpacity>
 
@@ -233,7 +278,11 @@ export default function CustomerHomeScreen() {
         <TouchableOpacity
           onPress={() => setActiveTab("track")}
           className="items-center justify-center py-2 px-4 rounded-full flex-row gap-2"
-          style={activeTab === "track" ? { backgroundColor: "rgba(249, 115, 22, 0.08)" } : undefined}
+          style={
+            activeTab === "track"
+              ? { backgroundColor: "rgba(249, 115, 22, 0.08)" }
+              : undefined
+          }
         >
           <Ionicons
             name="navigate-outline"
@@ -241,7 +290,9 @@ export default function CustomerHomeScreen() {
             color={activeTab === "track" ? "#F97316" : "#AAAAAA"}
           />
           {activeTab === "track" && (
-            <Text className="font-bold text-xs" style={{ color: "#F97316" }}>Track</Text>
+            <Text className="font-bold text-xs" style={{ color: "#F97316" }}>
+              Track
+            </Text>
           )}
         </TouchableOpacity>
 
@@ -249,7 +300,11 @@ export default function CustomerHomeScreen() {
         <TouchableOpacity
           onPress={() => setActiveTab("history")}
           className="items-center justify-center py-2 px-4 rounded-full flex-row gap-2"
-          style={activeTab === "history" ? { backgroundColor: "rgba(249, 115, 22, 0.08)" } : undefined}
+          style={
+            activeTab === "history"
+              ? { backgroundColor: "rgba(249, 115, 22, 0.08)" }
+              : undefined
+          }
         >
           <Ionicons
             name="time-outline"
@@ -257,7 +312,9 @@ export default function CustomerHomeScreen() {
             color={activeTab === "history" ? "#F97316" : "#AAAAAA"}
           />
           {activeTab === "history" && (
-            <Text className="font-bold text-xs" style={{ color: "#F97316" }}>History</Text>
+            <Text className="font-bold text-xs" style={{ color: "#F97316" }}>
+              History
+            </Text>
           )}
         </TouchableOpacity>
 
@@ -265,7 +322,11 @@ export default function CustomerHomeScreen() {
         <TouchableOpacity
           onPress={() => setActiveTab("profile")}
           className="items-center justify-center py-2 px-4 rounded-full flex-row gap-2"
-          style={activeTab === "profile" ? { backgroundColor: "rgba(249, 115, 22, 0.08)" } : undefined}
+          style={
+            activeTab === "profile"
+              ? { backgroundColor: "rgba(249, 115, 22, 0.08)" }
+              : undefined
+          }
         >
           <Ionicons
             name="person-outline"
@@ -273,7 +334,9 @@ export default function CustomerHomeScreen() {
             color={activeTab === "profile" ? "#F97316" : "#AAAAAA"}
           />
           {activeTab === "profile" && (
-            <Text className="font-bold text-xs" style={{ color: "#F97316" }}>Profile</Text>
+            <Text className="font-bold text-xs" style={{ color: "#F97316" }}>
+              Profile
+            </Text>
           )}
         </TouchableOpacity>
       </View>
