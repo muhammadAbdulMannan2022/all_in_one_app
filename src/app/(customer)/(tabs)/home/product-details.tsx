@@ -1,3 +1,5 @@
+import ProductSlider from "@/components/customer/product-slider";
+import ProductSpecs from "@/components/customer/product-specs";
 import { FontAwesome6, Ionicons } from "@expo/vector-icons";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { useState } from "react";
@@ -10,8 +12,6 @@ import {
   View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import ProductSlider from "@/components/customer/product-slider";
-import ProductSpecs from "@/components/customer/product-specs";
 
 const { width: SCREEN_WIDTH } = Dimensions.get("window");
 
@@ -187,7 +187,9 @@ export default function ProductDetailsScreen() {
                 Review
               </Text>
               <TouchableOpacity
-                onPress={() => router.push("/(customer)/home/rating-reviews" as any)}
+                onPress={() =>
+                  router.push("/(customer)/home/rating-reviews" as any)
+                }
               >
                 <Text
                   className="font-semibold text-sm"
