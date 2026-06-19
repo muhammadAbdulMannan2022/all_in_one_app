@@ -65,6 +65,12 @@ export default function SignUpScreen() {
     setSelectedRole(role.id);
     if (role.id === "restaurant" || role.id === "customer") {
       router.push(role.route as any);
+    } else if (role.id === "fleet") {
+      router.push("/(car-rental)/dashboard" as any);
+    } else if (role.id === "ride") {
+      router.push("/(transport-driver)/dashboard" as any);
+    } else if (role.id === "delivery") {
+      router.push("/(food-rider)/dashboard" as any);
     } else {
       alert(`${role.title} onboarding is coming soon! Only Customer and Restaurant Partner are active in this demo.`);
     }
