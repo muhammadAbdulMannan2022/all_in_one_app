@@ -216,7 +216,7 @@ export default function CustomerHomeScreen() {
               params: { service: selectedService },
             })
           }
-          onNotificationPress={() => console.log("Notifications pressed")}
+          onNotificationPress={() => router.push("/(customer)/notifications")}
         />
 
         {/* Top categories selection slider (Products, Restaurant, Car Rent, Get a ride) */}

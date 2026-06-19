@@ -1,124 +1,220 @@
 import { Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
-import { ScrollView, Text, TouchableOpacity, View } from "react-native";
+import React, { useState } from "react";
+import {
+  Image,
+  ScrollView,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
+} from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
-const HISTORY_ITEMS = [
+// History items data based on mockup
+const HISTORY_DATA = [
   {
     id: "h1",
-    shop: "Mobile Store",
-    orderId: "#ORD-99120",
-    date: "June 15, 2026",
-    price: 340.5,
-    itemsCount: 2,
-    status: "Delivered",
+    title: "Sakura Garden",
+    type: "food",
+    date: "Oct 20, 2026 • 2:30 PM",
+    refId: "Order ID : PHU8392",
+    status: "Complete",
+    image: "https://images.unsplash.com/photo-1615485290382-441e4d049cb5?w=400",
+    route: "/(customer)/(tabs)/history/order-detail" as const,
+    params: { title: "Sakura Garden", type: "food" },
   },
   {
     id: "h2",
-    shop: "Pizzeria Brand",
-    orderId: "#ORD-98441",
-    date: "June 12, 2026",
-    price: 35.8,
-    itemsCount: 3,
-    status: "Delivered",
+    title: "Mobile Store",
+    type: "product",
+    date: "Oct 20, 2026 • 2:30 PM",
+    refId: "Booking ID : PHU8392",
+    status: "Complete",
+    image: "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=400",
+    route: "/(customer)/(tabs)/history/order-detail" as const,
+    params: { title: "Mobile Store", type: "product" },
   },
   {
     id: "h3",
-    shop: "Sleek Gadgets Shop",
-    orderId: "#ORD-97103",
-    date: "June 08, 2026",
-    price: 155.0,
-    itemsCount: 1,
-    status: "Cancelled",
+    title: "Trip to Narayanganj Sadar",
+    type: "rides",
+    date: "Oct 20, 2026 • 2:30 PM",
+    refId: "Ride ID : PHU8392",
+    status: "Complete",
+    image: "https://images.unsplash.com/photo-1549399542-7e3f8b79c341?w=400",
+    route: "/(customer)/(tabs)/history/ride-detail" as const,
+    params: { title: "Trip to Narayanganj Sadar", type: "rides" },
   },
+  {
+    id: "h4",
+    title: "Toyota Camry 2022",
+    type: "rentals",
+    date: "Oct 20, 2026 • 2:30 PM",
+    refId: "Booking ID : PHU8392",
+    status: "Complete",
+    image: "https://images.unsplash.com/photo-1503376780353-7e6692767b70?w=400",
+    route: "/(customer)/(tabs)/history/booking-detail" as const,
+    params: { title: "Toyota Camry 2022", type: "rentals" },
+  },
+];
+
+const CATEGORIES = [
+  { id: "all", label: "All", icon: null },
+  { id: "product", label: "Product", icon: "storefront-outline" as const },
+  { id: "food", label: "Food", icon: "restaurant-outline" as const },
+  { id: "rides", label: "Rides", icon: "car-outline" as const },
+  { id: "rentals", label: "Rentals", icon: "car-sport-outline" as const },
 ];
 
 export default function HistoryScreen() {
   const router = useRouter();
+  const [searchQuery, setSearchQuery] = useState("");
+  const [activeCategory, setActiveCategory] = useState("all");
+
+  // Filtering logic
+  const filteredItems = HISTORY_DATA.filter((item) => {
+    const matchesCategory =
+      activeCategory === "all" || item.type === activeCategory;
+    const matchesSearch = item.title
+      .toLowerCase()
+      .includes(searchQuery.toLowerCase());
+    return matchesCategory && matchesSearch;
+  });
 
   return (
-    <SafeAreaView className="flex-1 bg-white" edges={["top"]}>
+    <SafeAreaView className="flex-1 bg-[#FCFCFC]" edges={["top"]}>
       {/* Header bar */}
-      <View className="flex-row items-center justify-center px-6 pt-4 pb-2 relative h-16 bg-white border-b border-gray-100">
+      <View 
+        className="flex-row items-center justify-between px-6 pt-4 pb-2 h-16"
+        style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between" }}
+      >
         <TouchableOpacity
           onPress={() => router.back()}
-          className="absolute left-6 w-12 h-12 rounded-full border border-gray-200 items-center justify-center bg-white shadow-sm"
-          style={{
-            shadowColor: "#000",
-            shadowOffset: { width: 0, height: 2 },
-            shadowOpacity: 0.05,
-            shadowRadius: 5,
-            elevation: 2,
-          }}
+          className="w-11 h-11 rounded-full border border-gray-100 items-center justify-center bg-white shadow-sm"
         >
           <Ionicons name="chevron-back" size={20} color="#6A7282" />
         </TouchableOpacity>
-        <Text className="text-brand-dark text-xl font-bold">Order History</Text>
+
+        <Text className="text-[#1F2937] text-lg font-bold">History</Text>
+
+        {/* Spacer to align center */}
+        <View className="w-11 h-11" />
       </View>
 
+      {/* Search Input */}
+      <View className="px-6 mt-4">
+        <View className="flex-row items-center bg-white border border-gray-100 rounded-2xl px-4 py-3 gap-2 shadow-sm shadow-black/[0.02]">
+          <Ionicons name="search-outline" size={18} color="#9CA3AF" />
+          <TextInput
+            placeholder="Search activity"
+            value={searchQuery}
+            onChangeText={setSearchQuery}
+            placeholderTextColor="#9CA3AF"
+            className="flex-1 text-[#1F2937] text-xs font-semibold p-0"
+          />
+        </View>
+      </View>
+
+      {/* Categories chips horizontal selector */}
+      <View className="mt-5">
+        <ScrollView
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          contentContainerStyle={{ paddingHorizontal: 24, gap: 10 }}
+        >
+          {CATEGORIES.map((cat) => {
+            const isActive = activeCategory === cat.id;
+            return (
+              <TouchableOpacity
+                key={cat.id}
+                onPress={() => setActiveCategory(cat.id)}
+                className={`flex-row items-center px-4 py-2.5 rounded-full border gap-1.5 ${
+                  isActive
+                    ? "bg-[#F97316] border-[#F97316]"
+                    : "bg-white border-gray-100"
+                }`}
+                style={{ flexDirection: "row", alignItems: "center" }}
+              >
+                {cat.icon && (
+                  <Ionicons
+                    name={cat.icon}
+                    size={14}
+                    color={isActive ? "#FFFFFF" : "#6A7282"}
+                  />
+                )}
+                <Text
+                  className={`text-xs font-bold ${
+                    isActive ? "text-white" : "text-gray-500"
+                  }`}
+                >
+                  {cat.label}
+                </Text>
+              </TouchableOpacity>
+            );
+          })}
+        </ScrollView>
+      </View>
+
+      {/* History Items list */}
       <ScrollView
         showsVerticalScrollIndicator={false}
-        className="bg-[#F9F7F6]/50 flex-1 px-6 pt-4"
-        contentContainerStyle={{ paddingBottom: 120 }}
+        className="flex-1 px-6 mt-6"
+        contentContainerStyle={{ paddingBottom: 120, gap: 16 }}
       >
-        <View className="gap-4">
-          {HISTORY_ITEMS.map((item) => (
-            <View
-              key={item.id}
-              className="bg-white rounded-3xl p-5 border border-gray-100 shadow-sm"
-            >
-              {/* Top row */}
-              <View className="flex-row justify-between items-center pb-3 border-b border-gray-100" style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center" }}>
-                <View>
-                  <Text className="text-brand-dark font-extrabold text-sm">
-                    {item.shop}
-                  </Text>
-                  <Text className="text-gray-400 text-[9px] mt-0.5 font-semibold">
-                    Order ID: {item.orderId}
-                  </Text>
-                </View>
-                <View
-                  className="px-2.5 py-1 rounded-full"
-                  style={{
-                    backgroundColor:
-                      item.status === "Delivered"
-                        ? "rgba(16, 185, 129, 0.08)"
-                        : "rgba(239, 68, 68, 0.08)",
-                  }}
+        {filteredItems.map((item) => (
+          <TouchableOpacity
+            key={item.id}
+            activeOpacity={0.9}
+            onPress={() =>
+              router.push({
+                pathname: item.route,
+                params: item.params,
+              })
+            }
+            className="bg-white rounded-3xl p-3.5 border border-gray-55 shadow-sm flex-row items-center justify-between"
+            style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between" }}
+          >
+            {/* Left Info block */}
+            <View className="flex-1 flex-row items-center gap-3.5" style={{ flexDirection: "row", alignItems: "center" }}>
+              {/* Product side Image snippet */}
+              <View className="w-20 h-20 bg-gray-50 rounded-2xl overflow-hidden border border-gray-100">
+                <Image
+                  source={{ uri: item.image }}
+                  className="w-full h-full"
+                  resizeMode="cover"
+                />
+              </View>
+
+              {/* Text metadata details */}
+              <View className="flex-1 gap-1">
+                <Text className="text-[#1F2937] font-bold text-sm">
+                  {item.title}
+                </Text>
+                <Text className="text-[#9CA3AF] text-[10px] font-semibold">
+                  {item.date}
+                </Text>
+                <Text className="text-[#9CA3AF] text-[10px] font-semibold">
+                  {item.refId}
+                </Text>
+
+                {/* Status indicator */}
+                <View 
+                  className="flex-row items-center gap-1 bg-[#EEFDF7] border border-[#D1FAE5] px-2 py-0.5 rounded-md self-start mt-1"
+                  style={{ flexDirection: "row", alignItems: "center" }}
                 >
-                  <Text
-                    className="text-[10px] font-bold"
-                    style={{
-                      color: item.status === "Delivered" ? "#10B981" : "#EF4444",
-                    }}
-                  >
+                  <Ionicons name="checkmark-circle" size={10} color="#10B981" />
+                  <Text className="text-[#10B981] text-[9px] font-bold">
                     {item.status}
                   </Text>
                 </View>
               </View>
-
-              {/* Detail row */}
-              <View className="flex-row justify-between items-center pt-3" style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center" }}>
-                <View>
-                  <Text className="text-brand-gray text-[10px] font-medium">
-                    {item.date}
-                  </Text>
-                  <Text className="text-brand-dark text-xs font-bold mt-1">
-                    {item.itemsCount} Items • ${item.price.toFixed(2)}
-                  </Text>
-                </View>
-                <TouchableOpacity
-                  onPress={() => router.push("/(customer)/cart")}
-                  className="px-4 py-2 border border-gray-200 rounded-xl bg-gray-50"
-                >
-                  <Text className="text-brand-dark font-bold text-[10px]">
-                    Reorder
-                  </Text>
-                </TouchableOpacity>
-              </View>
             </View>
-          ))}
-        </View>
+
+            {/* Right link indicator */}
+            <Ionicons name="chevron-forward" size={16} color="#9CA3AF" />
+          </TouchableOpacity>
+        ))}
       </ScrollView>
     </SafeAreaView>
   );

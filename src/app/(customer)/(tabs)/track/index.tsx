@@ -31,7 +31,10 @@ export default function TrackScreen() {
 
         <Text className="text-[#1F2937] text-lg font-bold">Live Track</Text>
 
-        <TouchableOpacity className="w-11 h-11 items-center justify-center relative">
+        <TouchableOpacity
+          onPress={() => router.push("/(customer)/notifications")}
+          className="w-11 h-11 items-center justify-center relative"
+        >
           <Ionicons name="notifications-outline" size={22} color="#6A7282" />
           <View className="absolute top-1.5 right-1.5 bg-[#F97316] w-4 h-4 rounded-full items-center justify-center">
             <Text className="text-white text-[9px] font-bold">1</Text>

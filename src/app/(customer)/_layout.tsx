@@ -9,6 +9,7 @@ export default function CustomerLayout() {
       <Stack.Screen name="checkout" />
       <Stack.Screen name="payment" />
       <Stack.Screen name="payment-success" />
+      <Stack.Screen name="notifications" />
     </Stack>
   );
 }
