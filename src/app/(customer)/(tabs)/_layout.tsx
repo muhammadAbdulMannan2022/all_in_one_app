@@ -10,7 +10,12 @@ export default function TabsLayout() {
     segments.includes("order-detail" as never) ||
     segments.includes("cancel-order" as never) ||
     segments.includes("restaurant-details" as never) ||
-    segments.includes("popular" as never);
+    segments.includes("popular" as never) ||
+    segments.includes("company-details" as never) ||
+    segments.includes("car-details" as never) ||
+    segments.includes("select-date" as never) ||
+    segments.includes("booking-summary" as never) ||
+    segments.includes("booking-detail" as never);
 
   return (
     <Tabs

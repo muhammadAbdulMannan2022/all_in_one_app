@@ -8,6 +8,10 @@ export default function HomeLayout() {
       <Stack.Screen name="rating-reviews" />
       <Stack.Screen name="restaurant-details" />
       <Stack.Screen name="popular" />
+      <Stack.Screen name="company-details" />
+      <Stack.Screen name="car-details" />
+      <Stack.Screen name="select-date" />
+      <Stack.Screen name="booking-summary" />
     </Stack>
   );
 }

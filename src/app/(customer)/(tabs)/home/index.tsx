@@ -230,16 +230,20 @@ export default function CustomerHomeScreen() {
         />
 
         {/* Promos Banner */}
-        <CustomerPromoBanner bannerUri={assets?.[0]?.localUri ?? undefined} />
+        {selectedService !== "car-rent" && (
+          <CustomerPromoBanner bannerUri={assets?.[0]?.localUri ?? undefined} />
+        )}
 
         {/* Categories Row (dynamic based on selected service) */}
-        <CustomerCategories
-          categories={currentServiceData.categories}
-          selectedCategory={selectedCategory}
-          onSelectCategory={setSelectedCategory}
-        />
+        {selectedService !== "car-rent" && (
+          <CustomerCategories
+            categories={currentServiceData.categories}
+            selectedCategory={selectedCategory}
+            onSelectCategory={setSelectedCategory}
+          />
+        )}
 
-        {/* Featured Products Grid or Restaurant list (dynamic based on selected service) */}
+        {/* Featured Products Grid or Restaurant list or Car Rental list (dynamic based on selected service) */}
         {selectedService === "restaurant" ? (
           <View className="px-6 pt-4">
             <View className="flex-row justify-between items-center mb-3.5" style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center" }}>
@@ -305,6 +309,89 @@ export default function CustomerHomeScreen() {
                       <View className="flex-row items-center gap-1" style={{ flexDirection: "row", alignItems: "center" }}>
                         <Ionicons name="time-outline" size={12} color="#9CA3AF" />
                         <Text className="text-brand-gray text-[10px] font-semibold">{rest.time}</Text>
+                      </View>
+                    </View>
+                  </View>
+                </TouchableOpacity>
+              ))}
+            </View>
+          </View>
+        ) : selectedService === "car-rent" ? (
+          <View className="px-6 pt-4">
+            <Text className="text-brand-dark text-lg font-bold mb-3.5">
+              Popular Company Nearby
+            </Text>
+            <View className="gap-4">
+              {[
+                {
+                  id: "comp1",
+                  title: "Bahamas Rides",
+                  subtitle: "Premium Car Rentals",
+                  rating: 4.5,
+                  location: "Narayanganj",
+                  price: "From $60/day",
+                  image: "https://images.unsplash.com/photo-1503376780353-7e6692767b70?w=600",
+                },
+                {
+                  id: "comp2",
+                  title: "Nexora DriveHub",
+                  subtitle: "Luxury & Comfort",
+                  rating: 4.5,
+                  location: "Narayanganj",
+                  price: "From $60/day",
+                  image: "https://images.unsplash.com/photo-1618843479313-40f8afb4b4d8?w=600",
+                },
+              ].map((company) => (
+                <TouchableOpacity
+                  key={company.id}
+                  onPress={() =>
+                    router.push({
+                      pathname: "/(customer)/(tabs)/home/company-details" as any,
+                      params: {
+                        id: company.id,
+                        title: company.title,
+                        subtitle: company.subtitle,
+                        rating: company.rating.toString(),
+                        location: company.location,
+                        price: company.price,
+                        image: company.image,
+                      },
+                    })
+                  }
+                  className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden mb-2"
+                  activeOpacity={0.9}
+                >
+                  <View className="w-full h-48 bg-[#F3F4F6]">
+                    <Image
+                      source={{ uri: company.image }}
+                      className="w-full h-full"
+                      resizeMode="cover"
+                    />
+                  </View>
+                  <View className="p-4 gap-1">
+                    <View className="flex-row justify-between items-center" style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center" }}>
+                      <Text className="text-brand-dark font-bold text-base">
+                        {company.title}
+                      </Text>
+                      <View className="flex-row items-center gap-1" style={{ flexDirection: "row", alignItems: "center" }}>
+                        <Ionicons name="star" size={14} color="#FFB800" />
+                        <Text className="text-brand-dark text-xs font-black">
+                          {company.rating}
+                        </Text>
+                      </View>
+                    </View>
+                    <Text className="text-brand-gray text-xs">
+                      {company.subtitle}
+                    </Text>
+                    <View className="flex-row justify-between items-center mt-2" style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center" }}>
+                      <Text className="text-[#F97316] font-bold text-sm">
+                        {company.price}
+                      </Text>
+                      <View className="flex-row items-center gap-1" style={{ flexDirection: "row", alignItems: "center" }}>
+                        <Ionicons name="location-outline" size={14} color="#6A7282" />
+                        <Text className="text-brand-gray text-xs font-semibold">
+                          {company.location}
+                        </Text>
                       </View>
                     </View>
                   </View>

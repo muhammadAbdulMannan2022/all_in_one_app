@@ -1,9 +1,12 @@
+import { TrackActiveBooking } from "@/components/customer/track-active-booking";
+import { TrackActiveOrder } from "@/components/customer/track-active-order";
+import { TrackEmptyState } from "@/components/customer/track-empty-state";
+import { TrackRecentActivity } from "@/components/customer/track-recent-activity";
 import { Ionicons } from "@expo/vector-icons";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { useState } from "react";
-import { Image, ScrollView, Text, TouchableOpacity, View } from "react-native";
+import { ScrollView, Text, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { WebView } from "react-native-webview";
 
 export default function TrackScreen() {
   const router = useRouter();
@@ -131,7 +134,31 @@ export default function TrackScreen() {
       </View>
 
       {/* Main Content */}
-      {activeTab === "Orders" && !isCancelled ? (
+      {activeTab === "Bookings" ? (
+        <ScrollView
+          showsVerticalScrollIndicator={false}
+          contentContainerStyle={{ flexGrow: 1, paddingBottom: 140 }}
+          className="px-6 pt-6"
+        >
+          {/* Active Booking Section */}
+          <Text className="text-[#1F2937] text-sm font-bold mb-3">
+            Active Booking
+          </Text>
+
+          <TrackActiveBooking
+            onViewDetails={() =>
+              router.push("/(customer)/(tabs)/track/booking-detail")
+            }
+          />
+
+          {/* Recent Activity Section */}
+          <Text className="text-[#1F2937] text-sm font-bold mb-3">
+            Recent Activity
+          </Text>
+
+          <TrackRecentActivity />
+        </ScrollView>
+      ) : activeTab === "Orders" && !isCancelled ? (
         <ScrollView
           showsVerticalScrollIndicator={false}
           contentContainerStyle={{ flexGrow: 1, paddingBottom: 140 }}
@@ -142,181 +169,25 @@ export default function TrackScreen() {
             Active Order
           </Text>
 
-          <View className="bg-white rounded-3xl p-5 border border-gray-100 shadow-md">
-            {/* Restaurant header */}
-            <View
-              className="flex-row items-center gap-3 mb-4"
-              style={{ flexDirection: "row", alignItems: "center" }}
-            >
-              <View className="w-11 h-11 rounded-xl bg-[#FFF7ED] items-center justify-center">
-                <Ionicons name="restaurant" size={20} color="#F97316" />
-              </View>
-              <View>
-                <Text className="text-[#1F2937] font-bold text-sm">
-                  Sakura Garden
-                </Text>
-                <Text className="text-[#9CA3AF] text-[10px] mt-0.5 font-medium">
-                  Japanese
-                </Text>
-              </View>
-            </View>
-
-            {/* Leaflet OpenStreetMap WebView */}
-            <View className="h-48 rounded-2xl overflow-hidden mb-4 border border-gray-100 bg-[#E5E7EB]">
-              <WebView
-                originWhitelist={["*"]}
-                source={{ html: leafletMapHtml }}
-                javaScriptEnabled={true}
-                domStorageEnabled={true}
-                scrollEnabled={false}
-                style={{ flex: 1 }}
-              />
-            </View>
-
-            {/* Order total info banner */}
-            <View
-              className="bg-[#FCFAF9] rounded-2xl p-4 flex-row justify-between items-center mb-5"
-              style={{
-                flexDirection: "row",
-                justifyContent: "space-between",
-                alignItems: "center",
-              }}
-            >
-              <Text className="text-[#6A7282] font-semibold text-xs">
-                Your Order is Processing
-              </Text>
-              <View className="items-end">
-                <Text className="text-[#F97316] font-bold text-base">
-                  $30.43
-                </Text>
-                <Text className="text-[#9CA3AF] text-[9px] font-medium mt-0.5">
-                  Total amount
-                </Text>
-              </View>
-            </View>
-
-            {/* Cancel / Track Buttons */}
-            <View className="flex-row gap-3" style={{ flexDirection: "row" }}>
-              <TouchableOpacity
-                onPress={() =>
-                  router.push("/(customer)/(tabs)/track/cancel-order")
-                }
-                className="flex-1 py-3.5 rounded-2xl border border-gray-200 bg-white items-center justify-center"
-              >
-                <Text className="text-gray-500 font-bold text-xs">
-                  Cancel Order
-                </Text>
-              </TouchableOpacity>
-              <TouchableOpacity
-                onPress={() =>
-                  router.push("/(customer)/(tabs)/track/order-detail")
-                }
-                className="flex-1 py-3.5 rounded-2xl border border-[#F97316] bg-white items-center justify-center"
-              >
-                <Text className="text-[#F97316] font-bold text-xs">
-                  Track Order
-                </Text>
-              </TouchableOpacity>
-            </View>
-          </View>
+          <TrackActiveOrder
+            mapHtml={leafletMapHtml}
+            onCancel={() =>
+              router.push("/(customer)/(tabs)/track/cancel-order")
+            }
+            onTrack={() => router.push("/(customer)/(tabs)/track/order-detail")}
+          />
 
           {/* Recent Activity Section */}
           <Text className="text-[#1F2937] text-sm font-bold mt-6 mb-3">
             Recent Activity
           </Text>
 
-          <View className="gap-3">
-            {/* Edamame */}
-            <View
-              className="bg-white rounded-2xl p-3 border border-gray-100 flex-row items-center justify-between"
-              style={{
-                flexDirection: "row",
-                justifyContent: "space-between",
-                alignItems: "center",
-              }}
-            >
-              <View
-                className="flex-row items-center gap-3"
-                style={{ flexDirection: "row", alignItems: "center" }}
-              >
-                <Image
-                  source={{
-                    uri: "https://images.unsplash.com/photo-1615485290382-441e4d049cb5?w=120",
-                  }}
-                  className="w-12 h-12 rounded-2xl"
-                />
-                <View>
-                  <Text className="text-[#1F2937] font-bold text-xs">
-                    Edamame
-                  </Text>
-                  <Text className="text-[#9CA3AF] text-[9px] font-medium mt-0.5">
-                    2 days ago
-                  </Text>
-                </View>
-              </View>
-              <View className="bg-[#ECFDF5] px-2.5 py-1 rounded-full">
-                <Text className="text-[#059669] text-[9px] font-bold">
-                  Delivered
-                </Text>
-              </View>
-            </View>
-
-            {/* BMW X5 */}
-            <View
-              className="bg-white rounded-2xl p-3 border border-gray-100 flex-row items-center justify-between"
-              style={{
-                flexDirection: "row",
-                justifyContent: "space-between",
-                alignItems: "center",
-              }}
-            >
-              <View
-                className="flex-row items-center gap-3"
-                style={{ flexDirection: "row", alignItems: "center" }}
-              >
-                <View className="w-12 h-12 rounded-2xl bg-[#FFF7ED] items-center justify-center">
-                  <Ionicons name="car-sport" size={22} color="#F97316" />
-                </View>
-                <View>
-                  <Text className="text-[#1F2937] font-bold text-xs">
-                    BMW X5 Rental
-                  </Text>
-                  <Text className="text-[#9CA3AF] text-[9px] font-medium mt-0.5">
-                    2 days ago
-                  </Text>
-                </View>
-              </View>
-              <View className="bg-[#ECFDF5] px-2.5 py-1 rounded-full">
-                <Text className="text-[#059669] text-[9px] font-bold">
-                  Delivered
-                </Text>
-              </View>
-            </View>
-          </View>
+          <TrackRecentActivity />
         </ScrollView>
       ) : (
-        /* Empty State with notOrder.png */
-        <View className="flex-1 items-center justify-center px-8 pb-20">
-          <Image
-            source={require("@/assets/illustrations/notOrder.png")}
-            className="w-64 h-64 mb-5"
-            resizeMode="contain"
-          />
-          <Text className="text-[#1F2937] font-bold text-lg mb-2">
-            No Active Orders
-          </Text>
-          <Text className="text-[#9CA3AF] text-center text-xs leading-5 px-6 mb-8 font-medium">
-            Your active orders, rides and car rentals will appear here for
-            real-time tracking
-          </Text>
-          <TouchableOpacity
-            onPress={() => router.push("/(customer)/(tabs)/home")}
-            className="w-full py-4 rounded-2xl items-center justify-center shadow-lg shadow-[#F97316]/10"
-            style={{ backgroundColor: "#F97316" }}
-          >
-            <Text className="text-white font-bold text-sm">Brows Now</Text>
-          </TouchableOpacity>
-        </View>
+        <TrackEmptyState
+          onBrowsePress={() => router.push("/(customer)/(tabs)/home")}
+        />
       )}
     </SafeAreaView>
   );

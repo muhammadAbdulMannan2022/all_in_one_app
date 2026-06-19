@@ -1,5 +1,5 @@
 import { Ionicons } from "@expo/vector-icons";
-import { useRouter } from "expo-router";
+import { useLocalSearchParams, useRouter } from "expo-router";
 import { useState } from "react";
 import {
   KeyboardAvoidingView,
@@ -14,12 +14,17 @@ import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function PaymentScreen() {
   const router = useRouter();
+  const params = useLocalSearchParams();
+  
+  const service = params.service as string;
+  const total = params.total ? parseFloat(params.total as string) : null;
+  const fullNameParam = params.fullName as string;
 
   // Card details state
   const [cardNumber, setCardNumber] = useState("");
   const [expiryDate, setExpiryDate] = useState("");
   const [cvv, setCvv] = useState("");
-  const [cardholderName, setCardholderName] = useState("");
+  const [cardholderName, setCardholderName] = useState(fullNameParam || "");
 
   // Helper to format Card Number with spaces (xxxx xxxx xxxx xxxx)
   const formatCardNumber = (text: string) => {
@@ -69,7 +74,10 @@ export default function PaymentScreen() {
     }
 
     // Go to payment success screen
-    router.replace("/(customer)/payment-success");
+    router.replace({
+      pathname: "/(customer)/payment-success",
+      params: { service },
+    });
   };
 
   return (
@@ -233,7 +241,9 @@ export default function PaymentScreen() {
                 className="w-full py-4 rounded-2xl justify-center items-center shadow-lg shadow-black/10"
                 style={{ backgroundColor: "#F97316" }}
               >
-                <Text className="text-white font-bold text-base">Confirm</Text>
+                <Text className="text-white font-bold text-base">
+                  {total ? `Pay Now ($${total.toFixed(2)})` : "Confirm"}
+                </Text>
               </TouchableOpacity>
             </View>
           </View>

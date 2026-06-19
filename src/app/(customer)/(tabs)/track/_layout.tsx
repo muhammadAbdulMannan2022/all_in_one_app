@@ -5,6 +5,7 @@ export default function TrackLayout() {
     <Stack screenOptions={{ headerShown: false }}>
       <Stack.Screen name="index" />
       <Stack.Screen name="order-detail" />
+      <Stack.Screen name="booking-detail" />
       <Stack.Screen
         name="cancel-order"
         options={{

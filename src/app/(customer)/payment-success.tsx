@@ -1,6 +1,6 @@
 import { Ionicons } from "@expo/vector-icons";
-import { useRouter } from "expo-router";
-import { useState } from "react";
+import { useLocalSearchParams, useRouter } from "expo-router";
+import { useEffect, useState } from "react";
 import {
   Image,
   Modal,
@@ -14,12 +14,25 @@ import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function PaymentSuccessScreen() {
   const router = useRouter();
+  const params = useLocalSearchParams();
+  const service = params.service as string;
+  const isCarRent = service === "car-rent";
 
   // Review states
-  const [showReviewModal, setShowReviewModal] = useState(true);
+  const [showReviewModal, setShowReviewModal] = useState(!isCarRent);
   const [rating, setRating] = useState(0);
   const [comment, setComment] = useState("");
   const [isDoneReview, setIsDoneReview] = useState(false);
+
+  // Auto redirect to home dashboard after 2 seconds for car rental booking flow
+  useEffect(() => {
+    if (isCarRent) {
+      const timer = setTimeout(() => {
+        router.replace("/(customer)/(tabs)/home");
+      }, 2000);
+      return () => clearTimeout(timer);
+    }
+  }, [isCarRent]);
 
   const handleSendReview = () => {
     if (rating === 0) {
@@ -55,22 +68,35 @@ export default function PaymentSuccessScreen() {
 
         {/* Subtitle */}
         <Text className="text-gray-400 text-center text-sm px-6 leading-5">
-          Please Check Your Notification, We Just Sent You A Message.
+          {isCarRent
+            ? "Your car rental booking has been confirmed successfully!"
+            : "Please Check Your Notification, We Just Sent You A Message."}
         </Text>
+
+        {isCarRent && (
+          <View className="flex-row items-center gap-2 mt-6" style={{ flexDirection: "row", alignItems: "center" }}>
+            <Ionicons name="sync-outline" size={16} color="#F97316" className="animate-spin" />
+            <Text className="text-[#F97316] text-xs font-bold">
+              Redirecting to home in 2s...
+            </Text>
+          </View>
+        )}
       </View>
 
       {/* Bottom Continue Browsing button */}
-      <View className="px-6 py-4 absolute bottom-6 left-6 right-6">
-        <TouchableOpacity
-          onPress={() => router.replace("/(customer)" as any)}
-          className="w-full py-4 rounded-2xl justify-center items-center shadow-lg shadow-black/10"
-          style={{ backgroundColor: "#F97316" }}
-        >
-          <Text className="text-white font-bold text-base">
-            Continue Browsing
-          </Text>
-        </TouchableOpacity>
-      </View>
+      {!isCarRent && (
+        <View className="px-6 py-4 absolute bottom-6 left-6 right-6">
+          <TouchableOpacity
+            onPress={() => router.replace("/(customer)" as any)}
+            className="w-full py-4 rounded-2xl justify-center items-center shadow-lg shadow-black/10"
+            style={{ backgroundColor: "#F97316" }}
+          >
+            <Text className="text-white font-bold text-base">
+              Continue Browsing
+            </Text>
+          </TouchableOpacity>
+        </View>
+      )}
 
       {/* Review Modal Overlay */}
       <Modal
