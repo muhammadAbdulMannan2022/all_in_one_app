@@ -12,6 +12,8 @@ export default function HomeLayout() {
       <Stack.Screen name="car-details" />
       <Stack.Screen name="select-date" />
       <Stack.Screen name="booking-summary" />
+      <Stack.Screen name="choose-service" />
+      <Stack.Screen name="set-destination" />
     </Stack>
   );
 }

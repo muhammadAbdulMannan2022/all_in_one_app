@@ -3,9 +3,9 @@ import React from "react";
 import { Text, TouchableOpacity, View } from "react-native";
 import { WebView } from "react-native-webview";
 
-interface TrackActiveOrderProps {
+interface TrackActiveRideProps {
   onCancel: () => void;
-  onTrack: () => void;
+  onLiveTrack: () => void;
 }
 
 const leafletMapHtml = `
@@ -80,29 +80,29 @@ const leafletMapHtml = `
   </html>
 `;
 
-export function TrackActiveOrder({ onCancel, onTrack }: TrackActiveOrderProps) {
+export function TrackActiveRide({ onCancel, onLiveTrack }: TrackActiveRideProps) {
   return (
-    <View className="bg-white rounded-3xl p-5 border border-gray-100 shadow-md">
-      {/* Restaurant header */}
+    <View className="bg-white rounded-[32px] p-5 border border-gray-100 shadow-md">
+      {/* Car header */}
       <View
         className="flex-row items-center gap-3 mb-4"
         style={{ flexDirection: "row", alignItems: "center" }}
       >
-        <View className="w-11 h-11 rounded-xl bg-[#FFF7ED] items-center justify-center">
-          <Ionicons name="restaurant" size={20} color="#F97316" />
+        <View className="w-11 h-11 rounded-2xl bg-[#FFF7ED] items-center justify-center">
+          <Ionicons name="car" size={22} color="#F97316" />
         </View>
         <View>
           <Text className="text-[#1F2937] font-bold text-sm">
-            Sakura Garden
+            Honda Civic
           </Text>
           <Text className="text-[#9CA3AF] text-[10px] mt-0.5 font-medium">
-            Japanese
+            Economy
           </Text>
         </View>
       </View>
 
-      {/* Leaflet OpenStreetMap WebView */}
-      <View className="h-48 rounded-2xl overflow-hidden mb-4 border border-gray-100 bg-[#E5E7EB]">
+      {/* Map WebView */}
+      <View className="h-44 rounded-[24px] overflow-hidden mb-4 border border-gray-100 bg-[#E5E7EB]">
         <WebView
           originWhitelist={["*"]}
           source={{ html: leafletMapHtml }}
@@ -113,48 +113,56 @@ export function TrackActiveOrder({ onCancel, onTrack }: TrackActiveOrderProps) {
         />
       </View>
 
-      {/* Order total info banner */}
+      {/* Destination & Estimate Fare */}
       <View
-        className="bg-[#FCFAF9] rounded-2xl p-4 flex-row justify-between items-center mb-5"
+        className="flex-row justify-between items-center mb-5 px-1"
         style={{
           flexDirection: "row",
           justifyContent: "space-between",
           alignItems: "center",
         }}
       >
-        <Text className="text-[#6A7282] font-semibold text-xs">
-          Your Order is Processing
-        </Text>
+        <View className="items-start">
+          <Text className="text-[#1F2937] font-bold text-sm">
+            Narayanganj
+          </Text>
+          <Text className="text-[#9CA3AF] text-[10px] font-semibold mt-0.5">
+            Destination
+          </Text>
+        </View>
+
+        {/* Vertical divider */}
+        <View className="w-[1px] h-8 bg-gray-150" />
+
         <View className="items-end">
-          <Text className="text-[#F97316] font-bold text-base">
+          <Text className="text-[#F97316] font-bold text-sm">
             $30.43
           </Text>
-          <Text className="text-[#9CA3AF] text-[9px] font-medium mt-0.5">
-            Total amount
+          <Text className="text-[#9CA3AF] text-[10px] font-semibold mt-0.5">
+            Estimate Fare
           </Text>
         </View>
       </View>
 
-      {/* Cancel / Track Buttons */}
+      {/* Action Buttons */}
       <View className="flex-row gap-3" style={{ flexDirection: "row" }}>
         <TouchableOpacity
           onPress={onCancel}
-          className="flex-1 py-3.5 rounded-2xl border border-gray-200 bg-white items-center justify-center"
+          className="flex-1 py-3 rounded-full border border-gray-200 bg-white items-center justify-center"
         >
           <Text className="text-gray-500 font-bold text-xs">
-            Cancel Order
+            Cancel Ride
           </Text>
         </TouchableOpacity>
         <TouchableOpacity
-          onPress={onTrack}
-          className="flex-1 py-3.5 rounded-2xl border border-[#F97316] bg-white items-center justify-center"
+          onPress={onLiveTrack}
+          className="flex-1 py-3 rounded-full border border-[#F97316] bg-white items-center justify-center"
         >
           <Text className="text-[#F97316] font-bold text-xs">
-            Track Order
+            Live Track
           </Text>
         </TouchableOpacity>
       </View>
     </View>
   );
 }
-

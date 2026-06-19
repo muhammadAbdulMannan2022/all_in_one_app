@@ -182,11 +182,14 @@ export default function CustomerHomeScreen() {
 
   // Handle service change and set default sub-category automatically
   const handleSelectService = (serviceId: string) => {
+    if (serviceId === "get-ride") {
+      router.push("/(customer)/(tabs)/home/choose-service");
+      return;
+    }
     const service = serviceId as
       | "products"
       | "restaurant"
-      | "car-rent"
-      | "get-ride";
+      | "car-rent";
     setSelectedService(service);
     const defaultCat = SERVICE_DATA[service].categories[0].id;
     setSelectedCategory(defaultCat);

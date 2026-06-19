@@ -6,6 +6,7 @@ export default function TrackLayout() {
       <Stack.Screen name="index" />
       <Stack.Screen name="order-detail" />
       <Stack.Screen name="booking-detail" />
+      <Stack.Screen name="ride-detail" />
       <Stack.Screen
         name="cancel-order"
         options={{
@@ -16,4 +17,3 @@ export default function TrackLayout() {
     </Stack>
   );
 }
-

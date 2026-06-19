@@ -1,5 +1,7 @@
 import { TrackActiveBooking } from "@/components/customer/track-active-booking";
 import { TrackActiveOrder } from "@/components/customer/track-active-order";
+import { TrackActiveRide } from "@/components/customer/track-active-ride";
+
 import { TrackEmptyState } from "@/components/customer/track-empty-state";
 import { TrackRecentActivity } from "@/components/customer/track-recent-activity";
 import { Ionicons } from "@expo/vector-icons";
@@ -15,79 +17,6 @@ export default function TrackScreen() {
 
   // Tab selections: All Activities, Bookings, Orders, Ride
   const [activeTab, setActiveTab] = useState("Orders");
-
-  // Leaflet HTML source for OpenStreetMap
-  const leafletMapHtml = `
-    <!DOCTYPE html>
-    <html>
-    <head>
-      <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-      <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-      <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-      <style>
-        body { margin: 0; padding: 0; background-color: #f3f4f6; }
-        #map { height: 100vh; width: 100vw; }
-        .leaflet-control-attribution { display: none !important; }
-        .leaflet-control-zoom { display: none !important; }
-        .custom-pin {
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          background-color: #F97316;
-          width: 24px;
-          height: 24px;
-          border-radius: 12px;
-          border: 2px solid white;
-          box-shadow: 0 2px 6px rgba(0,0,0,0.3);
-        }
-        .custom-tooltip {
-          background-color: white;
-          border: 1px solid #E5E7EB;
-          border-radius: 9999px;
-          padding: 4px 10px;
-          font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-          font-size: 10px;
-          font-weight: bold;
-          color: #F97316;
-          box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-          white-space: nowrap;
-        }
-      </style>
-    </head>
-    <body>
-      <div id="map"></div>
-      <script>
-        var map = L.map('map', {
-          zoomControl: false,
-          dragging: false,
-          touchZoom: false,
-          doubleClickZoom: false,
-          scrollWheelZoom: false
-        }).setView([23.8103, 90.4125], 15);
-        
-        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-          maxZoom: 19
-        }).addTo(map);
-
-        var marker = L.marker([23.8103, 90.4125], {
-          icon: L.divIcon({
-            className: 'custom-div-icon',
-            html: "<div class='custom-pin'><div style='width: 8px; height: 8px; border-radius: 4px; background-color: white;'></div></div>",
-            iconSize: [24, 24],
-            iconAnchor: [12, 12]
-          })
-        }).addTo(map);
-
-        marker.bindTooltip("Your Location", {
-          permanent: true,
-          direction: 'bottom',
-          className: 'custom-tooltip',
-          offset: [0, 8]
-        }).openTooltip();
-      </script>
-    </body>
-    </html>
-  `;
 
   return (
     <SafeAreaView className="flex-1 bg-[#FCFCFC]" edges={["top"]}>
@@ -134,7 +63,57 @@ export default function TrackScreen() {
       </View>
 
       {/* Main Content */}
-      {activeTab === "Bookings" ? (
+      {activeTab === "All Activities" ? (
+        <ScrollView
+          showsVerticalScrollIndicator={false}
+          contentContainerStyle={{ flexGrow: 1, paddingBottom: 140 }}
+          className="px-6 pt-6"
+        >
+          {/* Active Booking Section */}
+          <Text className="text-[#1F2937] text-sm font-bold mb-3">
+            Active Booking
+          </Text>
+
+          <TrackActiveBooking
+            onViewDetails={() =>
+              router.push("/(customer)/(tabs)/track/booking-detail")
+            }
+          />
+
+          {/* Active Order Card */}
+          <Text className="text-[#1F2937] text-sm font-bold mt-6 mb-3">
+            Active Order
+          </Text>
+
+          <TrackActiveOrder
+            onCancel={() =>
+              router.push("/(customer)/(tabs)/track/cancel-order")
+            }
+            onTrack={() => router.push("/(customer)/(tabs)/track/order-detail")}
+          />
+
+          {/* Active Ride Section */}
+          <Text className="text-[#1F2937] text-sm font-bold mt-6 mb-3">
+            Active Ride
+          </Text>
+
+          <TrackActiveRide
+            onCancel={() =>
+              router.push("/(customer)/(tabs)/track/cancel-order")
+            }
+            onLiveTrack={() =>
+              router.push("/(customer)/(tabs)/track/ride-detail")
+            }
+          />
+
+          {/* Recent Activity Section */}
+          <Text className="text-[#1F2937] text-sm font-bold mt-6 mb-3">
+            Recent Activity
+          </Text>
+
+          <TrackRecentActivity />
+        </ScrollView>
+      ) : activeTab === "Bookings" ? (
         <ScrollView
           showsVerticalScrollIndicator={false}
           contentContainerStyle={{ flexGrow: 1, paddingBottom: 140 }}
@@ -170,11 +149,37 @@ export default function TrackScreen() {
           </Text>
 
           <TrackActiveOrder
-            mapHtml={leafletMapHtml}
             onCancel={() =>
               router.push("/(customer)/(tabs)/track/cancel-order")
             }
             onTrack={() => router.push("/(customer)/(tabs)/track/order-detail")}
+          />
+
+          {/* Recent Activity Section */}
+          <Text className="text-[#1F2937] text-sm font-bold mt-6 mb-3">
+            Recent Activity
+          </Text>
+
+          <TrackRecentActivity />
+        </ScrollView>
+      ) : activeTab === "Ride" ? (
+        <ScrollView
+          showsVerticalScrollIndicator={false}
+          contentContainerStyle={{ flexGrow: 1, paddingBottom: 140 }}
+          className="px-6 pt-6"
+        >
+          {/* Active Ride Section */}
+          <Text className="text-[#1F2937] text-sm font-bold mb-3">
+            Active Ride
+          </Text>
+
+          <TrackActiveRide
+            onCancel={() =>
+              router.push("/(customer)/(tabs)/track/cancel-order")
+            }
+            onLiveTrack={() =>
+              router.push("/(customer)/(tabs)/track/ride-detail")
+            }
           />
 
           {/* Recent Activity Section */}
