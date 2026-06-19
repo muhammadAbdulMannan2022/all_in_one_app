@@ -1,5 +1,5 @@
 import { Ionicons } from "@expo/vector-icons";
-import { useRouter } from "expo-router";
+import { useRouter, useLocalSearchParams } from "expo-router";
 import { useRef, useState } from "react";
 import {
   Animated,
@@ -42,6 +42,36 @@ const INITIAL_ITEMS = [
     size: "Medium",
     color: "Black 'M' Size",
     image: "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=150",
+  },
+];
+
+const RESTAURANT_INITIAL_ITEMS = [
+  {
+    id: "f1",
+    title: "Sunset Pizza",
+    price: 5.99,
+    quantity: 2,
+    size: "Medium",
+    color: "Fresh Tomatoes & Cheese",
+    image: "https://images.unsplash.com/photo-1604382354936-07c5d9983bd3?w=150",
+  },
+  {
+    id: "f2",
+    title: "Mountain BBQ Burger",
+    price: 5.99,
+    quantity: 1,
+    size: "Medium",
+    color: "Double Beef Patty",
+    image: "https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=150",
+  },
+  {
+    id: "f4",
+    title: "Velvet Shake",
+    price: 5.99,
+    quantity: 2,
+    size: "Large",
+    color: "Strawberry Cream",
+    image: "https://images.unsplash.com/photo-1579871494447-9811cf80d66c?w=150",
   },
 ];
 
@@ -136,7 +166,12 @@ function SwipeableItem({ children, onDelete }: SwipeableItemProps) {
 
 export default function CartScreen() {
   const router = useRouter();
-  const [items, setItems] = useState(INITIAL_ITEMS);
+  const params = useLocalSearchParams();
+  const service = params?.service || "products";
+
+  const [items, setItems] = useState(() => {
+    return service === "restaurant" ? RESTAURANT_INITIAL_ITEMS : INITIAL_ITEMS;
+  });
 
   // Math totals calculation
   const subTotal = items.reduce(

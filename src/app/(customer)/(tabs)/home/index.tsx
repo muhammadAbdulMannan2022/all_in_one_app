@@ -2,7 +2,7 @@ import { Ionicons } from "@expo/vector-icons";
 import { useAssets } from "expo-asset";
 import { useRouter } from "expo-router";
 import { useState } from "react";
-import { ScrollView, Text, TouchableOpacity, View } from "react-native";
+import { ScrollView, Text, TouchableOpacity, View, Image } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import { CustomerCategories } from "@/components/customer/customer-categories";
@@ -56,36 +56,42 @@ const SERVICE_DATA = {
   },
   restaurant: {
     categories: [
-      { id: "pizza", title: "Pizza", icon: "pizza-outline" as const },
-      { id: "burger", title: "Burger", icon: "fast-food-outline" as const },
-      { id: "sushi", title: "Sushi", icon: "leaf-outline" as const },
-      { id: "desserts", title: "Desserts", icon: "ice-cream-outline" as const },
-      { id: "drinks", title: "Beverages", icon: "cafe-outline" as const },
+      { id: "japanese", title: "Japanese", image: "https://images.unsplash.com/photo-1569718212165-3a8278d5f624?w=150" },
+      { id: "italian", title: "Italian", image: "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=150" },
+      { id: "mexican", title: "Mexican", image: "https://images.unsplash.com/photo-1565299585323-38d6b0865b47?w=150" },
+      { id: "bangali", title: "Bangali", image: "https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=150" },
+      { id: "indian", title: "Indian", image: "https://images.unsplash.com/photo-1585938338392-50a59970d8ee?w=150" },
     ],
     products: [
       {
         id: "r1",
-        title: "Margherita Pizza",
-        price: 15,
-        rating: 4.9,
-        image:
-          "https://images.unsplash.com/photo-1604382354936-07c5d9983bd3?w=400",
+        title: "Sakura Garden",
+        cuisine: "Japanese",
+        price: 0,
+        rating: 4.5,
+        time: "25-35 min",
+        discount: "20% Off",
+        image: "https://images.unsplash.com/photo-1615485290382-441e4d049cb5?w=400",
       },
       {
         id: "r2",
-        title: "Double Burger",
-        price: 12,
-        rating: 4.8,
-        image:
-          "https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=400",
+        title: "Sakura Garden",
+        cuisine: "Japanese",
+        price: 0,
+        rating: 4.5,
+        time: "25-35 min",
+        discount: "",
+        image: "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=400",
       },
       {
         id: "r3",
-        title: "California Sushi",
-        price: 18,
-        rating: 4.7,
-        image:
-          "https://images.unsplash.com/photo-1579871494447-9811cf80d66c?w=400",
+        title: "Sakura Garden",
+        cuisine: "Japanese",
+        price: 0,
+        rating: 4.5,
+        time: "25-35 min",
+        discount: "20% Off",
+        image: "https://images.unsplash.com/photo-1615485290382-441e4d049cb5?w=400",
       },
     ],
   },
@@ -200,7 +206,13 @@ export default function CustomerHomeScreen() {
           name="Rahim Rehman"
           cartCount={1}
           notificationCount={1}
-          onCartPress={() => router.push("/(customer)/cart")}
+          selectedService={selectedService}
+          onCartPress={() =>
+            router.push({
+              pathname: "/(customer)/cart",
+              params: { service: selectedService },
+            })
+          }
           onNotificationPress={() => console.log("Notifications pressed")}
         />
 
@@ -227,26 +239,103 @@ export default function CustomerHomeScreen() {
           onSelectCategory={setSelectedCategory}
         />
 
-        {/* Featured Products Grid (dynamic based on selected service) */}
-        <CustomerProducts
-          products={currentServiceData.products}
-          onProductPress={(prod) => {
-            router.push({
-              pathname: "/(customer)/home/product-details" as any,
-              params: {
-                id: prod.id,
-                title: prod.title,
-                price: prod.price.toString(),
-                rating: prod.rating.toString(),
-                image: prod.image,
-              },
-            });
-          }}
-          onAddProduct={(id) => {
-            console.log("Added product to cart:", id);
-            router.push("/(customer)/cart");
-          }}
-        />
+        {/* Featured Products Grid or Restaurant list (dynamic based on selected service) */}
+        {selectedService === "restaurant" ? (
+          <View className="px-6 pt-4">
+            <View className="flex-row justify-between items-center mb-3.5" style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center" }}>
+              <Text className="text-brand-dark text-lg font-bold capitalize">
+                {currentServiceData.categories.find((c) => c.id === selectedCategory)?.title ?? "Japanese"}
+              </Text>
+              <TouchableOpacity onPress={() => router.push("/(customer)/(tabs)/home/popular" as any)}>
+                <Text className="text-[#F97316] text-xs font-bold">View All</Text>
+              </TouchableOpacity>
+            </View>
+
+            {/* Vertical list of restaurants */}
+            <View className="gap-3">
+              {(currentServiceData.products as any[]).map((rest) => (
+                <TouchableOpacity
+                  key={rest.id}
+                  onPress={() =>
+                    router.push({
+                      pathname: "/(customer)/(tabs)/home/restaurant-details" as any,
+                      params: {
+                        id: rest.id,
+                        title: rest.title,
+                        cuisine: rest.cuisine,
+                        rating: rest.rating.toString(),
+                        time: rest.time,
+                        image: rest.image,
+                      },
+                    })
+                  }
+                  className="bg-white rounded-2xl border border-gray-100 shadow-sm flex-row overflow-hidden p-3 gap-3"
+                  activeOpacity={0.9}
+                  style={{ flexDirection: "row" }}
+                >
+                  {/* Restaurant Image with Discount Badge */}
+                  <View className="w-28 h-20 bg-gray-100 rounded-xl overflow-hidden relative">
+                    <Image
+                      source={{ uri: rest.image }}
+                      className="w-full h-full"
+                      resizeMode="cover"
+                    />
+                    {rest.discount ? (
+                      <View className="absolute top-1.5 left-1.5 bg-[#F97316] px-1.5 py-0.5 rounded-md">
+                        <Text className="text-white text-[8px] font-black">{rest.discount}</Text>
+                      </View>
+                    ) : null}
+                  </View>
+
+                  {/* Restaurant Info on Right */}
+                  <View className="flex-1 justify-center gap-1">
+                    <Text className="text-brand-dark font-bold text-sm">
+                      {rest.title}
+                    </Text>
+                    <Text className="text-brand-gray text-[10px] font-semibold">
+                      {rest.cuisine}
+                    </Text>
+                    
+                    {/* Rating and Time */}
+                    <View className="flex-row items-center gap-3 mt-1" style={{ flexDirection: "row", alignItems: "center" }}>
+                      <View className="flex-row items-center gap-1" style={{ flexDirection: "row", alignItems: "center" }}>
+                        <Ionicons name="star" size={12} color="#FFB800" />
+                        <Text className="text-brand-dark text-[10px] font-extrabold">{rest.rating}</Text>
+                      </View>
+                      <View className="flex-row items-center gap-1" style={{ flexDirection: "row", alignItems: "center" }}>
+                        <Ionicons name="time-outline" size={12} color="#9CA3AF" />
+                        <Text className="text-brand-gray text-[10px] font-semibold">{rest.time}</Text>
+                      </View>
+                    </View>
+                  </View>
+                </TouchableOpacity>
+              ))}
+            </View>
+          </View>
+        ) : (
+          <CustomerProducts
+            products={currentServiceData.products}
+            onProductPress={(prod) => {
+              router.push({
+                pathname: "/(customer)/home/product-details" as any,
+                params: {
+                  id: prod.id,
+                  title: prod.title,
+                  price: prod.price.toString(),
+                  rating: prod.rating.toString(),
+                  image: prod.image,
+                },
+              });
+            }}
+            onAddProduct={(id) => {
+              console.log("Added product to cart:", id);
+              router.push({
+                pathname: "/(customer)/cart",
+                params: { service: selectedService },
+              });
+            }}
+          />
+        )}
       </ScrollView>
 
       {/* Filter Modal */}

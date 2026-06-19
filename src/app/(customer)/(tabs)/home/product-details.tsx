@@ -1,5 +1,6 @@
 import ProductSlider from "@/components/customer/product-slider";
 import ProductSpecs from "@/components/customer/product-specs";
+import { FloatingCartBar } from "@/components/customer/floating-cart-bar";
 import { FontAwesome6, Ionicons } from "@expo/vector-icons";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { useState } from "react";
@@ -73,6 +74,7 @@ export default function ProductDetailsScreen() {
   const image =
     (params.image as string) ||
     "https://images.unsplash.com/photo-1508685096489-7aacd43bd3b1?w=400";
+  const service = (params.service as string) || "products";
 
   // States
   const [selectedColor, setSelectedColor] = useState("dark-grey");
@@ -299,55 +301,23 @@ export default function ProductDetailsScreen() {
       </ScrollView>
 
       {/* Floating Bottom Action Row */}
-      <View
-        className="absolute bottom-6 bg-white rounded-full border border-gray-100 flex-row items-center px-4 py-2.5 gap-4 shadow-lg shadow-black/10"
-        style={{
-          alignSelf: "center",
-          shadowColor: "#000",
-          shadowOffset: { width: 0, height: 4 },
-          shadowOpacity: 0.08,
-          shadowRadius: 10,
-          elevation: 5,
-        }}
-      >
-        {/* Cart Button */}
-        <TouchableOpacity
-          onPress={() => router.push("/(customer)/cart")}
-          className="w-12 h-12 rounded-full border border-gray-200 justify-center items-center bg-white shadow-sm"
-        >
-          <FontAwesome6 name="opencart" size={20} color="#6A7282" />
-        </TouchableOpacity>
-
-        {/* Counter selector */}
-        <View className="flex-row items-center bg-white rounded-full px-2.5 py-1 border border-gray-200 gap-3">
-          <TouchableOpacity
-            onPress={() => quantity > 1 && setQuantity(quantity - 1)}
-            className="w-7 h-7 rounded-full justify-center items-center shadow-sm"
-            style={{ backgroundColor: "#F97316" }}
-          >
-            <Ionicons name="remove" size={16} color="#FFFFFF" />
-          </TouchableOpacity>
-          <Text className="text-brand-dark font-bold text-base min-w-[20px] text-center">
-            {quantity}
-          </Text>
-          <TouchableOpacity
-            onPress={() => setQuantity(quantity + 1)}
-            className="w-7 h-7 rounded-full justify-center items-center shadow-sm"
-            style={{ backgroundColor: "#F97316" }}
-          >
-            <Ionicons name="add" size={16} color="#FFFFFF" />
-          </TouchableOpacity>
-        </View>
-
-        {/* Buy Now Button */}
-        <TouchableOpacity
-          onPress={() => router.push("/(customer)/cart")}
-          className="px-6 py-3 rounded-full justify-center items-center shadow-sm"
-          style={{ backgroundColor: "#F97316" }}
-        >
-          <Text className="text-white font-bold text-sm">Buy now</Text>
-        </TouchableOpacity>
-      </View>
+      <FloatingCartBar
+        quantity={quantity}
+        onIncrease={() => setQuantity(quantity + 1)}
+        onDecrease={() => quantity > 1 && setQuantity(quantity - 1)}
+        onCartPress={() =>
+          router.push({
+            pathname: "/(customer)/cart",
+            params: { service },
+          })
+        }
+        onBuyNowPress={() =>
+          router.push({
+            pathname: "/(customer)/cart",
+            params: { service },
+          })
+        }
+      />
     </SafeAreaView>
   );
 }

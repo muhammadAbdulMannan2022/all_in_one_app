@@ -8,7 +8,9 @@ export default function TabsLayout() {
     segments.includes("product-details" as never) ||
     segments.includes("rating-reviews" as never) ||
     segments.includes("order-detail" as never) ||
-    segments.includes("cancel-order" as never);
+    segments.includes("cancel-order" as never) ||
+    segments.includes("restaurant-details" as never) ||
+    segments.includes("popular" as never);
 
   return (
     <Tabs

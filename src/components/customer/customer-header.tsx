@@ -6,6 +6,7 @@ interface CustomerHeaderProps {
   name: string;
   cartCount?: number;
   notificationCount?: number;
+  selectedService?: string;
   onCartPress?: () => void;
   onNotificationPress?: () => void;
 }
@@ -15,6 +16,7 @@ export function CustomerHeader({
   name,
   cartCount = 1,
   notificationCount = 1,
+  selectedService = "products",
   onCartPress,
   onNotificationPress,
 }: CustomerHeaderProps) {
@@ -54,7 +56,11 @@ export function CustomerHeader({
             onPress={onCartPress}
             className="w-10 h-10 rounded-full bg-white border border-gray-100 justify-center items-center relative shadow-sm"
           >
-            <FontAwesome6 name="opencart" size={18} color="#6A7282" />
+            {selectedService === "restaurant" ? (
+              <Ionicons name="basket-outline" size={18} color="#6A7282" />
+            ) : (
+              <FontAwesome6 name="opencart" size={18} color="#6A7282" />
+            )}
             <View 
               className="absolute -top-1.5 -right-1.5 rounded-full justify-center items-center" 
               style={{ backgroundColor: "#F97316" , width:20, height:20 }}

@@ -6,6 +6,8 @@ export default function HomeLayout() {
       <Stack.Screen name="index" />
       <Stack.Screen name="product-details" />
       <Stack.Screen name="rating-reviews" />
+      <Stack.Screen name="restaurant-details" />
+      <Stack.Screen name="popular" />
     </Stack>
   );
 }
